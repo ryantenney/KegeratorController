@@ -11,7 +11,9 @@ const boolean fahrenheit = false;
 
 boolean compressor = false;
 boolean compressorDelayed = false;
-float compressorOffTime = 0; // compressor should be off initially
+float compressorLastOffTime = 0; // compressor should be off initially
+float compressorLastOnTime = 0;
+float compressorTotalOnTime = 0;
 const int compressorDelay = 300; // 5 minutes
 
 void setup(void) {
@@ -57,7 +59,8 @@ void updateCompressor() {
       }
       digitalWrite(COMPRESSOR_PIN, LOW);
       compressor = false;
-      compressorOffTime = time;
+      compressorLastOffTime = time;
+      compressorTotalOnTime += time - compressorLastOnTime;
     }
   } else {
     // compressor currently off
@@ -65,18 +68,19 @@ void updateCompressor() {
       if (DEBUG) {
         Serial.println("Too warm!");
       }
-      if (time - compressorOffTime >= compressorDelay) {
+      if (time - compressorLastOffTime >= compressorDelay) {
         if (DEBUG) {
           Serial.println("Compressor turned on!");
         }
         digitalWrite(COMPRESSOR_PIN, HIGH);
         compressor = true;
         compressorDelayed = false;
+        compressorLastOnTime = time;
       } else {
         compressorDelayed = true;
         if (DEBUG) {
           Serial.print("Compressor delay: ");
-          Serial.print(time - compressorOffTime);
+          Serial.print(time - compressorLastOffTime);
           Serial.print("/");
           Serial.println(compressorDelay);
         }
