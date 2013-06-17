@@ -1,5 +1,6 @@
 const int SERIAL_LCD_PIN = 13;
 const int THERMOMETER_PIN = 5;
+const int COMPRESSOR_PIN = 6;
 
 const boolean DEBUG = false;
 
@@ -16,6 +17,7 @@ const int compressorDelay = 300; // 5 minutes
 void setup(void) {
   Serial.begin(9600);
 
+  setupCompressor();
   setupLCD();
 }
 
@@ -39,6 +41,11 @@ void loop(void) {
   delay(1000);
 }
 
+void setupCompressor() {
+  pinMode(COMPRESSOR_PIN, OUTPUT);
+  digitalWrite(COMPRESSOR_PIN, LOW);
+}
+
 void updateCompressor() {
   float time = getTime();
 
@@ -48,6 +55,7 @@ void updateCompressor() {
       if (DEBUG) {
         Serial.println("Compressor turned off!");
       }
+      digitalWrite(COMPRESSOR_PIN, LOW);
       compressor = false;
       compressorOffTime = time;
     }
@@ -61,6 +69,7 @@ void updateCompressor() {
         if (DEBUG) {
           Serial.println("Compressor turned on!");
         }
+        digitalWrite(COMPRESSOR_PIN, HIGH);
         compressor = true;
         compressorDelayed = false;
       } else {
