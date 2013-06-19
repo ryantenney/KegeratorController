@@ -17,7 +17,7 @@ float compressorTotalOnTime = 0;
 const int compressorDelay = 300; // 5 minutes
 
 void setup(void) {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   setupCompressor();
   setupLCD();
@@ -34,10 +34,21 @@ void loop(void) {
   updateLCD();
 
   if (DEBUG) {
+    Serial.println("");
+    Serial.println("#######################################################");
+
     Serial.print("Temp: ");
     Serial.print(temp);
     Serial.print(" deg");
     Serial.println(fahrenheit ? "F" : "C");
+
+    Serial.print("Time: ");
+    Serial.print(getTime());
+    Serial.println(" seconds");
+
+    Serial.print("Compressor total on time: ");
+    Serial.print(compressorTotalOnTime + (compressor && !compressorDelayed ? getTime() - compressorLastOnTime : 0));
+    Serial.println(" seconds");
   }
 
   delay(1000);
